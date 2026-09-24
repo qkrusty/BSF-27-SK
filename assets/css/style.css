@@ -165,17 +165,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 .hero__art{position:relative;aspect-ratio:1/1;width:100%;max-width:540px;margin-inline:auto}
 .hero__logo-btn{position:absolute;left:12%;top:11%;width:76%;z-index:2;padding:0;border:0;background:none;cursor:pointer;border-radius:24px;-webkit-tap-highlight-color:transparent}
-.hero__logo{width:100%;animation:logo 3.4s ease-in-out infinite;filter:drop-shadow(0 10px 0 rgba(16,16,20,.12))}
-.hero__logo-btn:hover .hero__logo{animation-duration:1.2s}
+.hero__logo{width:100%;animation:logo-loop 4.2s ease-in-out infinite;transform-origin:50% 100%}
+.hero__logo-btn:hover .hero__logo{animation-duration:2.2s}
 .hero__logo-btn.boing .hero__logo{animation:boing .95s cubic-bezier(.3,1.6,.5,1)}
 @keyframes logo{0%,100%{transform:translateY(0) rotate(-2deg) scale(1)}50%{transform:translateY(-10px) rotate(2deg) scale(1.03)}}
-.orbit{position:absolute;left:3%;right:3%;top:33%;height:34%;border-radius:50%;z-index:1;transform:rotate(-14deg)}
-.orbit i{position:absolute;inset:0;border-radius:50%;border:7px solid var(--mint);box-shadow:0 0 14px var(--mint),inset 0 0 12px var(--mint)}
-.orbit i::after{content:"";position:absolute;inset:-26px 16px;border-radius:50%;border:5px solid var(--pink);box-shadow:0 0 12px var(--pink);transform:rotate(22deg)}
-.orbit--back{animation:orbit 4s ease-in-out infinite}
-.orbit-front{position:absolute;inset:0;z-index:3;clip-path:inset(56% 0 0 0);pointer-events:none}
-.orbit-front .orbit{animation:orbit 4s ease-in-out infinite}
-@keyframes orbit{0%,100%{transform:rotate(-14deg) scale(1)}50%{transform:rotate(-8deg) scale(1.04,.94)}}
 .polaroid{margin:0;position:absolute;background:#fff;padding:9px 9px 34px;border:var(--b);box-shadow:var(--sh-sm);width:46%;z-index:1;animation:sway 5s ease-in-out infinite}
 .polaroid img{aspect-ratio:4/3;object-fit:cover;width:100%;border:2px solid var(--ink)}
 .polaroid figcaption{position:absolute;left:0;right:0;bottom:4px;text-align:center;font:700 22px/1 var(--f-hand)}
@@ -641,7 +634,7 @@ body.is-modal-open{overflow:hidden}
 }
 @media (max-width:640px){
   body{font-size:16px}
-  .t-big{-webkit-text-stroke:2px var(--ink);text-shadow:3px 3px 0 var(--ink)}
+  .t-big{-webkit-text-stroke:2px var(--ink);text-shadow:3px 3px 0 var(--ink);font-size:clamp(30px,9.2vw,40px)}
   .features{grid-template-columns:1fr}
   .news-grid{grid-template-columns:1fr}
   .artists{gap:26px 22px}
@@ -682,7 +675,7 @@ body.is-modal-open{overflow:hidden}
 .bigchip--city{background:var(--magenta);color:#fff;font-size:clamp(17px,2vw,24px);padding:.45em .6em .4em;transform:rotate(-.8deg)}
 @keyframes chip-a{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(-.3deg) translateY(-3px)}}
 @keyframes chip-b{0%,100%{transform:rotate(1deg)}50%{transform:rotate(2.2deg) translateY(-3px)}}
-.t-big{font-size:clamp(42px,6.2vw,88px)}
+.t-big{font-size:clamp(32px,calc(4.6vw + 8px),66px)}
 .hero__title::before{inset:0 -4% 2% -6%}
 .hero__title{margin-bottom:26px}
 
@@ -939,3 +932,24 @@ a.partner:hover{transform:rotate(-2deg) scale(1.05)}
 .thanks__amp{font:400 clamp(2.4rem,5vw,3.6rem)/1 var(--f-display);color:var(--yellow);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
 .thanks__logo{width:clamp(130px,14vw,170px);height:auto;margin-top:4px}
 @media (max-width:640px){.thanks__inner{flex-direction:column;gap:14px}}
+
+/* logo – loop animácia (poskok s pruženým dopadom) + tieň */
+@keyframes logo-loop{0%,100%{transform:translateY(0) rotate(-2deg) scale(1)}30%{transform:translateY(-12px) rotate(2deg) scale(1.02)}55%{transform:translateY(0) rotate(-1deg) scale(1)}64%{transform:translateY(2px) scale(1.07,.93)}74%{transform:translateY(-34px) rotate(3deg) scale(.96,1.05)}84%{transform:translateY(0) rotate(-1deg) scale(1.05,.95)}91%{transform:translateY(-6px) scale(.99,1.01)}}
+.logo-shadow{position:absolute;left:24%;right:24%;bottom:6%;height:7%;border-radius:50%;background:rgba(16,16,20,.16);z-index:1;animation:logo-shadow 4.2s ease-in-out infinite}
+@keyframes logo-shadow{0%,100%,55%,84%{transform:scale(1)}30%{transform:scale(.9)}64%{transform:scale(1.08)}74%{transform:scale(.7);opacity:.6}}
+
+/* malé pohyblivé obrázky (len transform = šetrné k výkonu) */
+.a-spin-slow{animation:spin 24s linear infinite}
+.a-drift{animation:drift-x 7s ease-in-out infinite alternate}
+@keyframes drift-x{from{transform:translateX(-16px)}to{transform:translateX(22px)}}
+.a-sway{animation:sway-palm 3.6s ease-in-out infinite;transform-origin:50% 95%}
+@keyframes sway-palm{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.a-bounce{animation:ball 1.8s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes ball{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-22px) rotate(180deg)}}
+@media (max-width:640px){.hero .a-drift,.hero .a-spin-slow{display:none}}
+
+/* partneri – obrázok 2026 */
+.page-hero--partners .sec-title{font-size:clamp(40px,6.4vw,84px);margin-bottom:clamp(24px,3vw,36px)}
+.partners-board{display:block;width:100%;padding:0;border:var(--b);border-radius:20px;overflow:hidden;background:var(--cream);box-shadow:var(--sh-lg);cursor:zoom-in;transition:transform .3s cubic-bezier(.2,1.4,.4,1)}
+.partners-board:hover{transform:rotate(-.6deg) scale(1.01)}
+.partners-board img{width:100%;height:auto;display:block}

@@ -10,6 +10,23 @@
   function $$(s, c) { return Array.prototype.slice.call((c || doc).querySelectorAll(s)); }
   function store(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) { return null; } }
 
+  /* ---------- 0. Bežiace pásy – doplniť obsah, aby v slučke nebola medzera ---------- */
+  $$('.marquee__track').forEach(function (tr) {
+    var groups = $$('.marquee__group', tr); if (groups.length !== 2) return;
+    var need = window.innerWidth * 1.2 + 200, orig = Array.prototype.slice.call(groups[0].children), base = groups[0].scrollWidth, copies = 1;
+    if (!base) return;
+    while (groups[0].scrollWidth < need && copies < 12) {
+      groups.forEach(function (g) {
+        orig.forEach(function (n) { var c = n.cloneNode(true); c.setAttribute('aria-hidden', 'true'); if (c.tagName === 'BUTTON' || c.tagName === 'A') c.tabIndex = -1; if (c.alt !== undefined) c.alt = ''; g.appendChild(c); });
+      });
+      copies++;
+    }
+    if (copies > 1) {
+      var dur = parseFloat(tr.style.getPropertyValue('--dur')) || 30;
+      tr.style.setProperty('--dur', (dur * copies) + 's');
+    }
+  });
+
   /* ---------- 1. Nadpisy s vlniacimi sa písmenami ---------- */
   $$('[data-wave]').forEach(function (el) {
     var text = el.textContent.trim(), i = 0;
