@@ -6,6 +6,20 @@
   var EMBED = window.BSF_EMBED !== false; // v náhľade (artifact) sa videá otvárajú na YouTube
   root.classList.add('js');
 
+  /* ---------- texty SK / EN (podľa <html lang>) ---------- */
+  var EN = /^en/i.test(root.lang || '');
+  var L = EN ? {
+    live: 'The festival is on right now – see you by the water!', menuOpen: 'Open menu', menuClose: 'Close menu',
+    yt: 'Watch on YouTube', photo: 'Festival photo', zoom: 'click the map – zoom in / out', src: 'source: ',
+    buy: 'Buy a ticket', more: 'More names on FB', sep: ',', hash: 'article', copied: 'Copied!',
+    phrases: ['See you by the water!', '29–31 July 2027!', '3 days of summer!', 'One big party!', '90s hits!', "Who's coming with you?", 'Beach, sand & palm trees!']
+  } : {
+    live: 'Festival práve prebieha – vidíme sa pri vode!', menuOpen: 'Otvoriť menu', menuClose: 'Zavrieť menu',
+    yt: 'Pozrieť na YouTube', photo: 'Fotografia z festivalu', zoom: 'kliknite do mapy – priblížiť / oddialiť', src: 'zdroj: ',
+    buy: 'Kúpiť vstupenku', more: 'Ďalšie mená na FB', sep: '\u00a0', hash: 'clanok', copied: 'Skopírované!',
+    phrases: ['Vidíme sa pri vode!', '29. – 31. 7. 2027!', '3 dni leta!', 'Veľká párty!', 'Hity 90. rokov!', 'Kto príde s vami?', 'Pláž, piesok a palmy!']
+  };
+
   function $(s, c) { return (c || doc).querySelector(s); }
   function $$(s, c) { return Array.prototype.slice.call((c || doc).querySelectorAll(s)); }
   function store(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) { return null; } }
@@ -64,7 +78,7 @@
           last[k] = v[k];
         }
       });
-      if (diff <= 0) { cd.innerHTML = '<p class="hand" style="color:var(--pink)">Festival práve prebieha – vidíme sa pri vode!</p>'; return; }
+      if (diff <= 0) { cd.innerHTML = '<p class="hand" style="color:var(--pink)">' + L.live + '</p>'; return; }
       setTimeout(tick, 1000 - (Date.now() % 1000));
     };
     tick();
@@ -72,13 +86,13 @@
 
   /* ---------- 3. Mobilné menu + hlavička ---------- */
   var burger = $('.burger'), nav = $('#nav'), header = $('.site-header');
-  function closeNav() { if (!nav) return; nav.classList.remove('is-open'); burger.setAttribute('aria-expanded', 'false'); burger.setAttribute('aria-label', 'Otvoriť menu'); doc.body.style.overflow = ''; }
+  function closeNav() { if (!nav) return; nav.classList.remove('is-open'); burger.setAttribute('aria-expanded', 'false'); burger.setAttribute('aria-label', L.menuOpen); doc.body.style.overflow = ''; }
   if (burger && nav) {
     burger.addEventListener('click', function () {
       var open = !nav.classList.contains('is-open');
       nav.classList.toggle('is-open', open);
       burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-      burger.setAttribute('aria-label', open ? 'Zavrieť menu' : 'Otvoriť menu');
+      burger.setAttribute('aria-label', open ? L.menuClose : L.menuOpen);
       doc.body.style.overflow = open ? 'hidden' : '';
     });
     $$('a', nav).forEach(function (a) { a.addEventListener('click', closeNav); });
@@ -115,7 +129,7 @@
   /* ---------- 5. Počítadlá v štatistikách ---------- */
   var counters = $$('[data-count]');
   if (counters.length && 'IntersectionObserver' in window && !reduce) {
-    var fmt = function (n, sep) { return sep ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : String(n); };
+    var fmt = function (n, sep) { return sep ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, L.sep) : String(n); };
     var cObs = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
@@ -143,7 +157,7 @@
     m.hidden = true;
     if (!$$('.modal').some(function (x) { return !x.hidden; })) doc.body.classList.remove('is-modal-open');
     if (m.id === 'media') $('.media__inner', m).innerHTML = '';
-    if (m.id === 'reader' && /^#clanok-/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+    if (m.id === 'reader' && location.hash.indexOf('#' + L.hash + '-') === 0) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
     if (m.id === 'promo') store('bsf-promo-closed', '1');
     lastFocus && lastFocus.focus && lastFocus.focus({ preventScroll: true });
   }
@@ -180,7 +194,7 @@
     var img = src.getAttribute('data-img'), date = src.getAttribute('data-date'), from = src.getAttribute('data-src');
     $('.reader__inner', reader).innerHTML =
       (img ? '<div class="reader__hero"><img src="' + img + '" alt=""></div>' : '') +
-      '<div class="reader__body"><div class="reader__meta">' + (date ? '<span>' + date + '</span>' : '') + (from ? '<span>zdroj: ' + from + '</span>' : '') + '</div>' + src.innerHTML + '</div>';
+      '<div class="reader__body"><div class="reader__meta">' + (date ? '<span>' + date + '</span>' : '') + (from ? '<span>' + L.src + from + '</span>' : '') + '</div>' + src.innerHTML + '</div>';
     openModal(reader);
     $('.reader', reader).scrollTop = 0; reader.scrollTop = 0;
     return true;
@@ -190,9 +204,9 @@
     e.preventDefault();
     var slug = a.getAttribute('data-post');
     if (reader && !reader.hidden) closeModal(reader);
-    if (openPost(slug)) { try { history.replaceState(null, '', '#clanok-' + slug); } catch (err) {} }
+    if (openPost(slug)) { try { history.replaceState(null, '', '#' + L.hash + '-' + slug); } catch (err) {} }
   });
-  function fromHash() { var m = /^#clanok-([\w-]+)$/.exec(location.hash); if (m) openPost(m[1]); }
+  function fromHash() { var m = new RegExp('^#' + L.hash + '-([\\w-]+)$').exec(location.hash); if (m) openPost(m[1]); }
   window.addEventListener('hashchange', fromHash); fromHash();
 
   /* ---------- 8b. Galéria – fotky sa načítajú, až keď sa k nim priblížite ---------- */
@@ -213,7 +227,7 @@
       if (EMBED) {
         b.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1" title="' + title + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
       } else {
-        b.innerHTML = '<span class="media__fallback" style="position:absolute;inset:0;display:grid;place-content:center;gap:12px;background:#101014"><span style="font:400 1.2rem/1.1 var(--f-display);color:#FFF8E2">' + title + '</span><a class="btn btn--yellow btn--sm" href="https://youtu.be/' + id + '" target="_blank" rel="noopener">Pozrieť na YouTube</a></span>';
+        b.innerHTML = '<span class="media__fallback" style="position:absolute;inset:0;display:grid;place-content:center;gap:12px;background:#101014"><span style="font:400 1.2rem/1.1 var(--f-display);color:#FFF8E2">' + title + '</span><a class="btn btn--yellow btn--sm" href="https://youtu.be/' + id + '" target="_blank" rel="noopener">' + L.yt + '</a></span>';
       }
       card && card.classList.add('is-playing');
       b.removeAttribute('aria-label');
@@ -224,10 +238,10 @@
   var media = $('#media');
   doc.addEventListener('click', function (e) {
     var b = e.target.closest('[data-full]'); if (!b || !media) return;
-    var img = $('img', b), src = b.getAttribute('data-full'), alt = b.getAttribute('data-alt') || (img && img.alt) || 'Fotografia z festivalu';
+    var img = $('img', b), src = b.getAttribute('data-full'), alt = b.getAttribute('data-alt') || (img && img.alt) || L.photo;
     var inner = $('.media__inner', media);
     if (b.hasAttribute('data-zoom')) {
-      inner.innerHTML = '<div class="zoomwrap"><img src="' + src + '" alt="' + alt + '"></div><p class="zoom-hint">kliknite do mapy – priblížiť / oddialiť</p>';
+      inner.innerHTML = '<div class="zoomwrap"><img src="' + src + '" alt="' + alt + '"></div><p class="zoom-hint">' + L.zoom + '</p>';
       var zw = $('.zoomwrap', inner);
       zw.addEventListener('click', function (ev) {
         var r = zw.getBoundingClientRect(), fx = (ev.clientX - r.left + zw.scrollLeft) / zw.scrollWidth, fy = (ev.clientY - r.top + zw.scrollTop) / zw.scrollHeight;
@@ -258,7 +272,7 @@
       $('.amodal__inner', amodal).innerHTML =
         '<div class="amodal__photo"><img src="' + src.getAttribute('data-photo') + '" alt="' + $('h2', src).textContent + '">' + (badge ? '<span class="badge badge--yellow">' + badge + '</span>' : '') + (hit ? '<p class="amodal__hit"><svg aria-hidden="true"><use href="#i-star"/></svg><span>' + hit + '</span></p>' : '') + '</div>' +
         '<div class="amodal__body">' + src.innerHTML +
-        '<div class="amodal__cta"><a class="btn btn--ink" href="https://www.superticket.sk/big-summer-fest-2027" target="_blank" rel="noopener">Kúpiť vstupenku</a><a class="btn btn--blue" href="https://www.facebook.com/bigsummerfest.sk/" target="_blank" rel="noopener">Ďalšie mená na FB</a></div></div>';
+        '<div class="amodal__cta"><a class="btn btn--ink" href="https://www.superticket.sk/big-summer-fest-2027" target="_blank" rel="noopener">' + L.buy + '</a><a class="btn btn--blue" href="https://www.facebook.com/bigsummerfest.sk/" target="_blank" rel="noopener">' + L.more + '</a></div></div>';
       openModal(amodal); amodal.scrollTop = 0;
     });
   });
@@ -266,7 +280,7 @@
   /* ---------- 9d. Logo – klik = boing + ohňostroj hviezd ---------- */
   var logoBtn = $('.hero__logo-btn'), fx = $('.logo-fx');
   if (logoBtn && fx) {
-    var phrases = ['Vidíme sa pri vode!', '29. – 31. 7. 2027!', '3 dni leta!', 'Veľká párty!', 'Hity 90. rokov!', 'Kto príde s vami?', 'Pláž, piesok a palmy!'], ph = 0;
+    var phrases = L.phrases, ph = 0;
     var cols = ['#FF3E5C', '#FFDA30', '#1CFFB6', '#3FA9F5', '#FF2884'], shapes = ['#i-star', '#i-spark', '#i-plus', '#i-heart'];
     logoBtn.addEventListener('click', function () {
       logoBtn.classList.remove('boing'); void logoBtn.offsetWidth; logoBtn.classList.add('boing');
@@ -289,6 +303,17 @@
       new IntersectionObserver(function (en) { fab.classList.toggle('is-away', en[0].isIntersecting); }, { rootMargin: '0px 0px -30% 0px' }).observe(heroEl);
     } else fab.classList.remove('is-away');
   }
+
+  /* ---------- 9g. Kopírovanie e-mailu ---------- */
+  $$('[data-copy]').forEach(function (b) {
+    var lbl = $('span', b) || b, orig = lbl.textContent, t;
+    b.addEventListener('click', function () {
+      var txt = b.getAttribute('data-copy');
+      var done = function () { lbl.textContent = L.copied; b.classList.add('is-done'); clearTimeout(t); t = setTimeout(function () { lbl.textContent = orig; b.classList.remove('is-done'); }, 1800); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function () { location.href = 'mailto:' + txt; });
+      else { var ta = doc.createElement('textarea'); ta.value = txt; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0'; doc.body.appendChild(ta); ta.select(); try { doc.execCommand('copy'); done(); } catch (e) {} doc.body.removeChild(ta); }
+    });
+  });
 
   /* ---------- 10. FAQ – akordeón + filter ---------- */
   var faqId = 0;

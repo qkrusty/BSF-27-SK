@@ -76,6 +76,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .hand--pink{color:var(--magenta)} .hand--blue{color:#1473B8} .hand--yellow{color:var(--yellow)}
 .sticker{display:inline-flex;align-items:center;gap:.4em;font:800 .82rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.08em;padding:.6em .9em;border:var(--b);border-radius:999px;box-shadow:var(--sh-sm);background:var(--yellow);transform:rotate(-3deg);margin:0 0 18px;animation:wiggle 3s ease-in-out infinite;--r:3deg}
 .sticker span{font-family:var(--f-display);font-weight:400;letter-spacing:.02em}
+.sticker span{white-space:nowrap}
+@media (max-width:560px){.sticker{display:inline-block;line-height:1.35;max-width:100%}}
 .hl{position:relative;display:inline-block;z-index:0;padding-inline:.12em}
 .hl::before{content:"";position:absolute;inset:18% -.08em 4% -.08em;background:var(--c,var(--yellow));border:var(--b);z-index:-1;transform:skew(-8deg) rotate(-1.5deg);box-shadow:var(--sh-sm)}
 .badge{position:absolute;top:10px;left:10px;z-index:3;font:800 .66rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.08em;padding:.5em .7em;border:2.5px solid var(--ink);border-radius:999px;background:var(--bb,var(--yellow));box-shadow:2px 2px 0 var(--ink);transform:rotate(-4deg)}
@@ -110,6 +112,17 @@ button{font:inherit;color:inherit;cursor:pointer}
 .burger[aria-expanded="true"] span:nth-child(2){opacity:0}
 .burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
 
+/* prepínač jazyka SK / EN */
+.lang-switch{display:inline-flex;align-items:stretch;flex:none;border:var(--b);border-radius:10px;overflow:hidden;background:var(--cream);box-shadow:3px 3px 0 var(--ink);font:800 .8rem/1 var(--f-body);letter-spacing:.04em;transition:transform .15s,box-shadow .15s}
+.lang-switch>*{display:flex;align-items:center;gap:6px;padding:0 .7em;min-height:38px;text-decoration:none;color:var(--ink)}
+.lang-switch__cur{background:var(--ink);color:var(--cream)!important}
+.lang-switch a{position:relative}
+.lang-switch a::before{content:"";width:14px;height:10px;border-radius:2px;border:1.5px solid var(--ink);background:linear-gradient(#fff 0 33%,#0B4EA2 33% 66%,#EE1C25 66%)}
+.lang-switch a[hreflang="en"]::before{background:linear-gradient(90deg,transparent 42%,#C8102E 42% 58%,transparent 58%),linear-gradient(transparent 38%,#C8102E 38% 62%,transparent 62%),#fff;box-shadow:inset 0 0 0 2px #012169}
+.lang-switch:hover{transform:translate(-2px,-2px) rotate(-2deg);box-shadow:5px 5px 0 var(--ink)}
+.lang-switch a:hover{background:var(--yellow)}
+.footer__lang{display:inline-flex;align-items:center;gap:8px;margin-top:6px;font-weight:700}
+@media (max-width:480px){.lang-switch__cur{display:none}.lang-switch>*{padding:0 .6em;min-height:44px}}
 @media (max-width:1100px){
   .site-header{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--cream)}
   .burger{display:block}
@@ -121,6 +134,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   .nav__social{display:flex;justify-content:center;margin-top:8px}
   .header__cta{margin-left:auto}
 }
+@media (min-width:1101px) and (max-width:1340px){.header__inner{gap:12px}.nav{gap:6px}.nav>a{font-size:.72rem;padding:.6em .55em;letter-spacing:.01em}.header__cta{gap:8px}.header__cta .btn--sm{padding:.7em .8em}.lang-switch__cur{display:none}}
 @media (max-width:480px){.header__cta .btn span{display:none}.header__cta .btn{padding:.7em}.brand{width:64px}.header__inner{min-height:68px}}
 
 /* ---------- HERO ---------- */
@@ -742,7 +756,7 @@ body.is-modal-open{overflow:hidden}
 .quality--water small .ico{width:.95em;height:.95em}
 
 /* mapa */
-.map-open{position:relative;display:block;width:100%;padding:0;border:var(--b);border-radius:14px;overflow:hidden;background:var(--cream);cursor:zoom-in}
+.map-open{position:relative;display:block;width:100%;padding:0;border:var(--b);border-radius:14px;overflow:hidden;background:var(--cream);cursor:pointer}
 .map-img{width:100%;height:auto;transition:transform .6s}
 .map-open:hover .map-img{transform:scale(1.03)}
 .map-open__hint{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:.5em;font:800 .85rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.06em;background:var(--ink);color:var(--yellow);padding:.8em 1.1em;border-radius:999px;border:3px solid var(--cream);box-shadow:0 0 0 3px var(--ink);animation:breathe 1.6s ease-in-out infinite}
@@ -914,7 +928,7 @@ a.partner:hover{transform:rotate(-2deg) scale(1.05)}
 }
 
 /* výkon: sekcie mimo obrazovky sa nevykresľujú */
-.videos,.gallery,.news,.press,.faq--mini,.follow{content-visibility:auto;contain-intrinsic-size:auto 900px}
+.videos,.gallery,.news,.press,.faq--mini,.follow,.contactsec{content-visibility:auto;contain-intrinsic-size:auto 900px}
 
 /* Beach Bar logo */
 .bbr__logo img{width:clamp(180px,22vw,240px);height:auto;display:block;transition:transform .3s}
@@ -953,3 +967,39 @@ a.partner:hover{transform:rotate(-2deg) scale(1.05)}
 .partners-board{display:block;width:100%;padding:0;border:var(--b);border-radius:20px;overflow:hidden;background:var(--cream);box-shadow:var(--sh-lg);cursor:zoom-in;transition:transform .3s cubic-bezier(.2,1.4,.4,1)}
 .partners-board:hover{transform:rotate(-.6deg) scale(1.01)}
 .partners-board img{width:100%;height:auto;display:block}
+
+/* ---------- MAPA – veľké tlačidlo pod náhľadom ---------- */
+.mapcard__btn{display:flex;width:100%;margin-top:16px;font-size:clamp(1rem,1.6vw,1.2rem);padding:1.05em 1.3em;border-radius:14px;box-shadow:var(--sh);justify-content:space-between;text-align:left}
+.mapcard__btn span{flex:1}
+.mapcard__btn .ico{width:1.35em;height:1.35em}
+.mapcard__btn:hover .mapcard__pin{animation:pin-hop .6s ease}
+@keyframes pin-hop{40%{transform:translateY(-5px) rotate(-8deg)}}
+
+/* ---------- KONTAKT ---------- */
+.contactsec{position:relative;background:var(--yellow);border-top:var(--b);overflow:hidden;isolation:isolate}
+.contactsec::before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(rgba(16,16,20,.13) 2px,transparent 2.6px);background-size:18px 18px}
+.contactsec__grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:center}
+.contactsec__main .sec-lead{max-width:44ch}
+.contactsec__mail{display:inline-flex;align-items:center;gap:16px;max-width:100%;margin-top:6px;text-decoration:none;color:var(--ink);background:var(--cream);border:var(--b);border-radius:18px;padding:14px 22px 14px 14px;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s}
+.contactsec__mail:hover{transform:translate(-3px,-3px) rotate(-1deg);box-shadow:var(--sh-lg)}
+.contactsec__ico{display:grid;place-items:center;flex:none;width:58px;height:58px;border:var(--b);border-radius:14px;background:var(--pink);color:var(--cream)}
+.contactsec__ico svg{width:34px;height:34px}
+.contactsec__mail:hover .contactsec__ico svg{animation:pin-hop .6s ease}
+.contactsec__addr{display:flex;flex-direction:column;min-width:0}
+.contactsec__addr small{font:800 .7rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.12em;opacity:.7;margin-bottom:6px}
+.contactsec__addr b{font:400 clamp(1.15rem,2.6vw,1.9rem)/1.05 var(--f-display);overflow-wrap:anywhere}
+.contactsec__row{display:flex;align-items:center;flex-wrap:wrap;gap:12px 20px;margin-top:18px}
+.contactsec__copy{border:2.5px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--yellow);font:800 .78rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.08em;padding:.75em 1.1em;box-shadow:3px 3px 0 var(--pink);transition:transform .15s}
+.contactsec__copy:hover{transform:translate(-1px,-1px)}
+.contactsec__copy.is-done{background:var(--mint);color:var(--ink)}
+.contactsec__org{margin:0;font-size:.95rem}
+.contactsec__cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.ccard{position:relative;display:flex;flex-direction:column;gap:4px;height:100%;text-decoration:none;color:var(--ink);background:var(--cream);border:var(--b);border-radius:18px;padding:18px 18px 16px;box-shadow:5px 5px 0 var(--ink);transition:transform .15s,box-shadow .15s}
+.ccard:hover{transform:translate(-2px,-3px) rotate(-1deg);box-shadow:7px 8px 0 var(--ink)}
+.ccard__ico{width:48px;height:48px;padding:8px;margin-bottom:8px;background:var(--c);border:2.5px solid var(--ink);border-radius:13px;color:var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.ccard b{font:400 1.15rem/1.05 var(--f-display);text-transform:uppercase}
+.ccard span{font-weight:600;font-size:.92rem;opacity:.8}
+.footer__mail a{display:inline-flex;align-items:center;gap:8px;font-weight:800!important;font-size:1.02rem;color:var(--yellow)}
+.footer__mail .ico{width:22px;height:22px;color:var(--yellow)}
+@media (max-width:900px){.contactsec__grid{grid-template-columns:1fr}}
+@media (max-width:480px){.contactsec__cards{grid-template-columns:1fr 1fr;gap:12px}.ccard{padding:16px 12px 12px}.ccard b{font-size:1rem}.contactsec__mail{gap:12px;padding:12px 14px 12px 12px}.contactsec__ico{width:48px;height:48px}}

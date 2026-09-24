@@ -1,0 +1,141 @@
+/* =========================================================
+   BIG SUMMER FEST 2027 – interaktívna mapa (mapa.html / map.html)
+   ========================================================= */
+.page-hero--map{padding-block:clamp(34px,5vw,64px) clamp(26px,3.5vw,40px)}
+.page-hero--map .sec-title{font-size:clamp(40px,6.4vw,84px);margin-bottom:14px}
+.page-hero--map .tag{display:inline-block;margin-top:4px;background:var(--yellow)}
+.wrap--wide{width:100%;max-width:1660px;margin-inline:auto;padding-inline:var(--gutter)}
+.fmap-sec{padding-block:clamp(22px,3.5vw,44px) clamp(56px,7vw,96px);background:var(--paper)}
+
+.fmap{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:clamp(16px,2vw,28px);align-items:start}
+
+/* ---------- mapa ---------- */
+.fmap__stage{position:relative;background:var(--cream);border:var(--b);border-radius:22px;box-shadow:var(--sh-lg);padding:12px}
+.fmap__bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 2px 10px}
+.fmap__zoom{display:flex;gap:8px}
+.fmap__zoom button{display:grid;place-items:center;min-width:44px;height:44px;padding:0 .7em;border:var(--b);border-radius:11px;background:var(--yellow);box-shadow:3px 3px 0 var(--ink);font:800 1.3rem/1 var(--f-body);transition:transform .15s,box-shadow .15s}
+.fmap__zoom button:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.fmap__zoom button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.fmap__zoom button:disabled{opacity:.4;pointer-events:none}
+.fmap__zoom .fmap__reset{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;background:var(--cream)}
+.fmap__hint{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font:400 1.35rem/1 var(--f-hand);color:var(--magenta)}
+.fmap__hint svg{width:22px;height:22px;color:var(--pink)}
+.fmap__viewport{position:relative;overflow:auto;border:var(--b);border-radius:14px;background:#FCF6E1;aspect-ratio:1720/1278;overscroll-behavior:contain;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.fmap__viewport.is-zoomed{cursor:grab}
+.fmap__viewport.is-dragging{cursor:grabbing}
+.fmap__viewport.is-dragging .spot{cursor:grabbing}
+.fmap__canvas{position:relative;width:calc(var(--z,1) * 100%);transition:width .35s cubic-bezier(.3,.7,.2,1)}
+.fmap__canvas.no-anim{transition:none}
+.fmap__canvas>img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.fmap__svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.fmap__note{margin:10px 4px 0;font:600 .85rem/1.4 var(--f-body);color:var(--ink-2)}
+
+/* miesta */
+.spot{cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.spot__hit{fill:#fff;fill-opacity:0}
+.spot__area{fill:var(--c);fill-opacity:0;stroke:var(--ink);stroke-opacity:0;stroke-width:4;stroke-dasharray:14 9;stroke-linejoin:round;transition:fill-opacity .2s,stroke-opacity .2s}
+.spot__halo{fill:#fff;fill-opacity:0;stroke:var(--ink);stroke-width:5;stroke-opacity:0;transition:stroke-opacity .2s,fill-opacity .2s}
+.spot__ring{fill:none;stroke:var(--c);stroke-width:7;opacity:0;transform-box:fill-box;transform-origin:center}
+.spot.is-hl .spot__area,.spot.is-on .spot__area,.spot:focus-visible .spot__area{fill-opacity:.32;stroke-opacity:1}
+.spot.is-hl .spot__halo,.spot.is-on .spot__halo,.spot:focus-visible .spot__halo{stroke-opacity:1;fill-opacity:.25}
+.spot.is-hl .spot__ring,.spot.is-on .spot__ring,.spot:focus-visible .spot__ring{animation:spot-ring 1.25s ease-out infinite}
+.spot.is-soft .spot__halo{stroke-opacity:.55}
+.spot.is-soft .spot__area{fill-opacity:.14;stroke-opacity:.45}
+.spot.is-soft .spot__ring{animation:spot-ring 1.8s ease-out infinite}
+.fmap__svg.is-intro .spot__ring{animation:spot-ring 1.4s ease-out 2 both;animation-delay:calc(var(--d,0) * 45ms)}
+@keyframes spot-ring{0%{opacity:1;transform:scale(.8)}100%{opacity:0;transform:scale(1.55)}}
+
+/* bublina s názvom */
+.fmap__tip{position:absolute;left:0;top:0;z-index:5;pointer-events:none;display:flex;align-items:center;gap:8px;max-width:280px;background:var(--ink);color:var(--cream);font:800 .82rem/1.15 var(--f-body);letter-spacing:.02em;padding:.55em .85em .55em .55em;border-radius:999px;box-shadow:3px 3px 0 var(--c,var(--pink));opacity:0;transform:translate(-50%,calc(-100% - 10px)) scale(.9);transition:opacity .15s,transform .15s}
+.fmap__tip.is-on{opacity:1;transform:translate(-50%,calc(-100% - 14px)) scale(1)}
+.fmap__tip::after{content:"";position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:var(--ink);transform:translateX(-50%) rotate(45deg);border-radius:2px}
+.fmap__tip .mi{width:24px;height:24px}
+
+/* ---------- ikony legendy ---------- */
+.mi{display:inline-block;flex:none;width:38px;height:38px}
+.mi--s{background:url(../img/mapa-ikony.webp) no-repeat;background-size:1200% 100%;background-position:calc(var(--i) * 100% / 11) 0}
+
+/* ---------- bočný panel ---------- */
+.fmap__side{position:sticky;top:96px;max-height:calc(100vh - 112px);max-height:calc(100dvh - 112px);display:flex;flex-direction:column;background:var(--cream);border:var(--b);border-radius:22px;box-shadow:var(--sh);overflow:hidden}
+.fmap__legend{overflow:auto;padding:14px 14px 18px;overscroll-behavior:contain;scrollbar-width:thin}
+.lg-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 4px 6px}
+.lg-title h2{display:inline-block;font:400 1.7rem/1 var(--f-display);text-transform:uppercase;background:var(--yellow);border:var(--b);border-radius:10px;padding:.2em .45em .15em;box-shadow:3px 3px 0 var(--ink);transform:rotate(-2deg)}
+.lg-title small{font:800 .72rem/1.2 var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);text-align:right}
+.lg-group h3{font:800 .72rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.12em;color:var(--ink-2);margin:16px 6px 6px;display:flex;align-items:center;gap:8px}
+.lg-group h3::after{content:"";flex:1;height:2px;background:var(--ink);opacity:.15}
+.lg-list{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+.lg-item{--c:var(--yellow);display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:5px 8px;border:2.5px solid transparent;border-radius:12px;background:transparent;text-align:left;font:700 .98rem/1.2 var(--f-body);color:var(--ink);transition:background .15s,border-color .15s,box-shadow .15s,transform .15s}
+.lg-item__name{flex:1}
+.lg-item__n{flex:none;font:800 .72rem/1 var(--f-body);background:var(--ink);color:var(--cream);border-radius:999px;padding:.35em .55em}
+.lg-item:hover,.lg-item.is-hl,.lg-item:focus-visible{background:var(--c);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink);transform:translate(-2px,-1px)}
+.lg-item.is-hl .mi{animation:mi-bounce .5s ease}
+@keyframes mi-bounce{40%{transform:scale(1.18) rotate(-6deg)}}
+
+/* ---------- detail miesta ---------- */
+.fmap__detail{display:none;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.fmap.is-detail .fmap__legend{display:none}
+.fmap.is-detail .fmap__detail{display:block;animation:fd-in .3s cubic-bezier(.3,.7,.2,1)}
+@keyframes fd-in{from{opacity:0;transform:translateX(18px)}}
+.fd__top{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--cream);border-bottom:var(--b)}
+.fd__back{display:inline-flex;align-items:center;gap:8px;border:2.5px solid var(--ink);border-radius:10px;background:var(--yellow);box-shadow:2px 2px 0 var(--ink);font:800 .78rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.06em;padding:.6em .8em}
+.fd__back svg{width:16px;height:16px;transform:scaleX(-1)}
+.fd__close{display:none;place-items:center;width:40px;height:40px;border:2.5px solid var(--ink);border-radius:50%;background:var(--cream)}
+.fd__close svg{width:18px;height:18px}
+.fd__media{position:relative;display:block;width:100%;aspect-ratio:16/10;padding:0;border:0;border-bottom:var(--b);background:#FCF6E1 no-repeat;overflow:hidden}
+.fd__media img{width:100%;height:100%;object-fit:cover}
+button.fd__media{cursor:zoom-in}
+.fd__cap{position:absolute;left:10px;bottom:10px;font:800 .66rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.08em;background:var(--cream);border:2px solid var(--ink);border-radius:999px;padding:.45em .7em}
+.fd__body{padding:16px 18px 20px}
+.fd__cat{display:inline-flex;align-items:center;gap:8px;font:800 .72rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.08em;background:var(--c);border:2.5px solid var(--ink);border-radius:999px;padding:.3em .8em .3em .3em;box-shadow:2px 2px 0 var(--ink)}
+.fd__cat .mi{width:26px;height:26px}
+.fd__body h3{font:400 clamp(1.6rem,2.4vw,2rem)/1.02 var(--f-display);text-transform:uppercase;margin:12px 0 10px}
+.fd__body>p{margin:0 0 12px;font-size:1rem}
+.fd__body .checks{margin:0 0 14px}
+.fd__body .checks li{font-size:.94rem}
+.fd__spots h4{font:800 .72rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-2);margin:4px 0 8px}
+.fd__chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.fd__chip{border:2.5px solid var(--ink);border-radius:999px;background:var(--cream);font:700 .82rem/1.1 var(--f-body);padding:.5em .8em;box-shadow:2px 2px 0 var(--ink);text-align:left}
+.fd__chip:hover,.fd__chip.is-hl{background:var(--c)}
+.fd__chip[aria-current="true"]{background:var(--ink);color:var(--cream)}
+.fd__cta{margin-top:4px}
+
+/* ---------- pás pod mapou ---------- */
+.fmap-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:clamp(24px,3vw,36px);background:var(--pink);border:var(--b);border-radius:20px;box-shadow:var(--sh);padding:18px 22px}
+.fmap-cta h2{font:400 clamp(1.5rem,2.6vw,2.1rem)/1 var(--f-display);text-transform:uppercase;color:var(--cream);-webkit-text-stroke:1.5px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
+.fmap-cta p{margin:6px 0 0;font-weight:700;color:var(--ink)}
+.fmap-cta__btns{display:flex;gap:10px;flex-wrap:wrap}
+
+.fmap__backdrop{display:none}
+
+/* ---------- tablet / mobil ---------- */
+@media (max-width:1180px){.fmap{grid-template-columns:minmax(0,1fr) 330px}}
+@media (max-width:980px){
+  .fmap{grid-template-columns:1fr}
+  .fmap__side{position:static;max-height:none}
+  .fmap__legend{overflow:visible}
+  .lg-group .lg-list{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+  .fmap.is-detail .fmap__legend{display:block}
+  .fmap__detail{position:fixed;left:0;right:0;bottom:0;z-index:90;display:block;max-height:82vh;max-height:82dvh;background:var(--cream);border-top:var(--b);border-radius:22px 22px 0 0;box-shadow:0 -8px 0 rgba(16,16,20,.12);transform:translateY(105%);visibility:hidden;transition:transform .35s cubic-bezier(.3,.7,.2,1),visibility 0s .35s}
+  .fmap.is-detail .fmap__detail{transform:none;visibility:visible;animation:none;transition:transform .35s cubic-bezier(.3,.7,.2,1)}
+  .fmap__backdrop{display:block;position:fixed;inset:0;z-index:89;background:rgba(16,16,20,.45);opacity:0;pointer-events:none;transition:opacity .3s}
+  .fmap.is-detail .fmap__backdrop{opacity:1;pointer-events:auto}
+  .fd__top{border-radius:22px 22px 0 0}
+  .fd__top::before{content:"";position:absolute;left:50%;top:5px;width:44px;height:5px;border-radius:5px;background:var(--ink);opacity:.25;transform:translateX(-50%)}
+  .fd__back{display:none}
+  .fd__close{display:grid;margin-left:auto}
+  .fd__media{aspect-ratio:16/8}
+}
+@media (max-width:700px){
+  .fmap__stage{padding:8px;border-radius:18px}
+  .fmap__viewport{aspect-ratio:auto;height:min(64vh,540px);height:min(64dvh,540px)}
+  .fmap__hint{width:100%;margin:2px 0 0;font-size:1.2rem;order:3}
+  .fmap__zoom button{min-width:42px;height:42px}
+  .fmap-cta{padding:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  .spot__ring,.fmap__svg.is-intro .spot__ring{animation:none!important}
+  .fmap__canvas{transition:none}
+}
+.btn--cream{--bg:var(--cream)}
+/* plávajúca vstupenka by na mape prekrývala legendu – pod mapou je vlastný pás s vstupenkami */
+.ticket-fab{display:none!important}
